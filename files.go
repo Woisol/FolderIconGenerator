@@ -4,7 +4,7 @@ package main
 // package main
 
 import (
-	"fmt"
+	// "fmt"
 	// "io/fs"
 	"log"
 	"os"
@@ -31,6 +31,6 @@ func updateDir(cwd string) {
 			curDirs = append(curDirs, dir)
 		}
 	}
-	fmt.Print(curDirs)
+	// fmt.Print(curDirs)
 
 }
