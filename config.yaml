@@ -1,0 +1,12 @@
+presets:
+  蓝色:
+    base: "D:/Picture/ico/cakeOS ICO/Folder BLUE .ico"
+    formator: ""
+  绿色:
+    base: "D:/Picture/ico/cakeOS ICO/Folder GREEN.ico"
+  橙色:
+    base: "D:/Picture/ico/cakeOS ICO/Folder ORANGE.ico"
+  紫色:
+    base: "D:/Picture/ico/cakeOS ICO/Folder PURPLE.ico"
+  红色:
+    base: "D:\Picture\ico\cakeOS ICO\Folder RED .ico"
