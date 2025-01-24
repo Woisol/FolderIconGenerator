@@ -4,6 +4,7 @@ import (
 	// !这个ico原来是会加上去的……
 	ico "github.com/biessek/golang-ico"
 	"github.com/fogleman/gg"
+	"golang.org/x/image/font"
 
 	// !go graph……估计是比较重量级的库了……
 	// "github.com/fogleman/gg"
@@ -38,7 +39,7 @@ type Preset struct {
 
 // type Preset interface{}
 
-func generateIcon(dir fs.DirEntry, preset string, content string, decorateIconPath string, _baseIconPath string, _formator string, decImgSize int, yOffset int, fontSize int) {
+func generateIcon(dir fs.DirEntry, preset, content, decorateIconPath, _baseIconPath, _formator string, fontSize, decImgSize, yOffset int) {
 	var baseIconPath string
 	var formator string
 	if preset == "" {
@@ -83,12 +84,12 @@ func generateIcon(dir fs.DirEntry, preset string, content string, decorateIconPa
 		formator = preset.Formator
 	}
 
-	_drawIcon(dir, baseIconPath, formator, content, decorateIconPath, decImgSize, yOffset, fontSize)
+	_drawIcon(dir, baseIconPath, formator, content, decorateIconPath, fontSize, decImgSize, yOffset)
 
 }
 
 // !重要参考https://blog.csdn.net/qq_40585384/article/details/124762939
-func _drawIcon(dir fs.DirEntry, baseIconPath string, formator string, content string, decorateIconPath string, decImgSize int, yOffset int, fontSize int) {
+func _drawIcon(dir fs.DirEntry, baseIconPath, formator, content, decorateIconPath string, fontSize, decImgSize, yOffset int) {
 	// ** 检查path
 	// !Open内部其实就是调用OpenFile……
 	baseIcon, err_baseIconPath := os.Open(baseIconPath)
@@ -127,11 +128,12 @@ func _drawIcon(dir fs.DirEntry, baseIconPath string, formator string, content st
 		decWidth = 0
 		decHeight = 0
 	} else {
+		decWidth = decImgSize
+		// !注意整除的问题
+		decHeight = int(float64(decImgSize) / float64(decImg.Bounds().Dx()) * float64(decImg.Bounds().Dy()))
+		log.Println("Decoration Image found, size: ", decImg.Bounds().Dx(), "x", decImg.Bounds().Dy())
 
-		decImg = resize.Resize(uint(decImgSize), uint(decImgSize)/uint(decImg.Bounds().Dx())*uint(decImg.Bounds().Dy()), decImg, resize.Lanczos3)
-
-		decWidth = decImg.Bounds().Dx()
-		decHeight = decImg.Bounds().Dy()
+		decImg = resize.Resize(uint(decWidth), uint(decHeight), decImg, resize.Lanczos3)
 	}
 
 	// decWidth := decImgSize
@@ -148,15 +150,22 @@ func _drawIcon(dir fs.DirEntry, baseIconPath string, formator string, content st
 	draw.Draw(genImg, baseImg.Bounds(), baseImg, image.Point{}, draw.Src)
 
 	icoTextOffset := 0
-	if content == "" || decorateIconPath == "" {
-		icoTextOffset = fontSize / 2
-	} else {
+	if decorateIconPath != "" && err_decImg == nil {
+		if content != "" {
+			icoTextOffset = fontSize / 2
+		}
 		// ** 绘制图标
 		draw.Draw(genImg, image.Rect((width-decWidth)/2, (height-decHeight)/2-icoTextOffset+yOffset, (width+decWidth)/2, (height+decHeight)/2-icoTextOffset+yOffset), decImg, image.Point{}, draw.Over)
 	}
+	// if content != "" && decorateIconPath != "" {
+	// 	icoTextOffset = fontSize / 2
+	// } else {
+	// 	if decorateIconPath != ""
+	// 		draw.Draw(genImg, image.Rect((width-decWidth)/2, (height-decHeight)/2-icoTextOffset+yOffset, (width+decWidth)/2, (height+decHeight)/2-icoTextOffset+yOffset), decImg, image.Point{}, draw.Over)
+	// }
 
 	// ** 绘制文字
-	drawString(genImg, content, fontSize, float64(width)/2, float64((height-decHeight)/2+icoTextOffset+yOffset))
+	drawString(genImg, content, fontSize, float64(width)/2, float64((height+decHeight)/2+icoTextOffset+yOffset))
 
 	outImg, _ := os.Create(dir.Name() + ".ico")
 	ico.Encode(outImg, genImg)
@@ -166,10 +175,16 @@ func _drawIcon(dir fs.DirEntry, baseIconPath string, formator string, content st
 // ** 文字绘制函数，默认居中定位
 func drawString(genImg *image.RGBA, content string, fontSize int, x, y float64) {
 	// !Read和Open还是不太一样的
-	// !https://www.cnblogs.com/mfrank/p/14175084.html，gg默认只支持ttf不支持otf……
-	font, err := gg.LoadFontFace("assets/font.ttf", float64(fontSize))
+	// ~~https://www.cnblogs.com/mfrank/p/14175084.html，gg默认只支持ttf不支持otf……
+	var font font.Face
+	var err error
+	font, err = gg.LoadFontFace("assets/font.ttf", float64(fontSize))
 	if err != nil {
-		log.Fatal(err)
+		log.Println("WARN: ttf not found, try to use otf font")
+		font, err = gg.LoadFontFace("assets/font.otf", float64(fontSize))
+		if err != nil {
+			log.Fatal("Font not found")
+		}
 	}
 	// ftypeContext := freetype.NewContext()
 	// ftypeContext.SetClip(genImg.Bounds())
@@ -186,7 +201,8 @@ func drawString(genImg *image.RGBA, content string, fontSize int, x, y float64) 
 	// // !https://www.cnblogs.com/mfrank/p/14162815.html
 	// ftypeContext.DrawString(content, freetype.Pt(x-len(content)/2.0*fontSize, y))
 
-	ggContext := gg.NewContext(genImg.Bounds().Dx(), genImg.Bounds().Dy())
+	// !用ForRGBA就在现有图片上继续修改不需要把前面的也用gg重写了……
+	ggContext := gg.NewContextForRGBA(genImg)
 	ggContext.SetColor(color.Black)
 	ggContext.SetFontFace(font)
 	ggContext.DrawStringAnchored(content, x, y, 0.5, 0.5)
