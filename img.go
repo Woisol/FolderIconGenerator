@@ -1,11 +1,14 @@
 package main
 
 import (
+	// !这个ico原来是会加上去的……
 	ico "github.com/biessek/golang-ico"
+	// "github.com/mewkiz/pkg/imgutil"
+	"github.com/nfnt/resize"
+
 	// "github.com/mewkiz/pkg/imgutil"
 	"image"
 	"image/draw"
-	"image/png"
 	"io/fs"
 	"log"
 	"os"
@@ -30,7 +33,7 @@ type Preset struct {
 
 // type Preset interface{}
 
-func generateIcon(dir fs.DirEntry, preset string, content string, decorateIconPath string, _baseIconPath string, _formator string, decImgSize float64, fontSize int) {
+func generateIcon(dir fs.DirEntry, preset string, content string, decorateIconPath string, _baseIconPath string, _formator string, decImgSize int, yOffset int, fontSize int) {
 	var baseIconPath string
 	var formator string
 	if preset == "" {
@@ -75,11 +78,11 @@ func generateIcon(dir fs.DirEntry, preset string, content string, decorateIconPa
 		formator = preset.Formator
 	}
 
-	_drawIcon(dir, baseIconPath, formator, content, decorateIconPath, decImgSize, fontSize)
+	_drawIcon(dir, baseIconPath, formator, content, decorateIconPath, decImgSize, yOffset, fontSize)
 
 }
 
-func _drawIcon(dir fs.DirEntry, baseIconPath string, formator string, content string, decorateIconPath string, decImgSize float64, fontSize int) {
+func _drawIcon(dir fs.DirEntry, baseIconPath string, formator string, content string, decorateIconPath string, decImgSize int, yOffset int, fontSize int) {
 	// ** 检查path
 	// !Open内部其实就是调用OpenFile……
 	baseIcon, err_baseIconPath := os.Open(baseIconPath)
@@ -111,18 +114,26 @@ func _drawIcon(dir fs.DirEntry, baseIconPath string, formator string, content st
 	width := baseImg.Bounds().Dx()
 	height := baseImg.Bounds().Dy()
 
-	// ** 计算字体大小
+	decImg = resize.Resize(uint(decImgSize), uint(decImgSize)/uint(decImg.Bounds().Dx())*uint(decImg.Bounds().Dy()), decImg, resize.Lanczos3)
+
+	decWidth := decImg.Bounds().Dx()
+	decHeight := decImg.Bounds().Dy()
+
+	// decWidth := decImgSize
+	// decHeight := decImg.Bounds().Dy() / decImg.Bounds().Dx() * decWidth
+
+	// ** 计算字体大小@todo To Implement
 	if fontSize == 0 {
-		fontSize = int(decImgSize * 0.1)
+		fontSize = int(float64(decImgSize) * 0.1)
 	}
 	// font := truetype.NewFont(gofont.Collection(), fontSize)
 
 	genImg := image.NewRGBA(image.Rect(0, 0, width, height))
-	draw.Draw(genImg, baseImg.Bounds(), image.White, image.Point{}, draw.Src)
-	draw.Draw(genImg, decImg.Bounds(), decImg, image.Point{}, draw.Over)
+	draw.Draw(genImg, baseImg.Bounds(), baseImg, image.Point{}, draw.Src)
+	draw.Draw(genImg, image.Rect((width-decWidth)/2, (height-decHeight)/2+yOffset, (width+decWidth)/2, (height+decHeight)/2+yOffset), decImg, image.Point{}, draw.Over)
 
-	resImg, _ := os.Create(dir.Name() + ".png")
-	png.Encode(resImg, genImg)
+	resImg, _ := os.Create(dir.Name() + ".ico")
+	ico.Encode(resImg, genImg)
 
 }
 
