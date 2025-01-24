@@ -1,25 +1,34 @@
 package main
 
 import (
-	"fmt"
+	ico "github.com/biessek/golang-ico"
+	// "github.com/mewkiz/pkg/imgutil"
 	"image"
 	"image/draw"
 	"image/png"
 	"io/fs"
 	"log"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	presets []Preset `yaml:"presets"`
+	// presets []Preset `yaml:"presets"`
 	// presets map[string]Preset `yaml:"presets"`
+	// !极其神奇……此处必须要大写，也不是要求不同，删去一个字母依然无法读取
+	Presets map[string]Preset `yaml:"presets"`
 }
+
 type Preset struct {
-	baseIconPath string `yaml:"baseIconPath"`
-	formator     string `yaml:"formator"`
+	BaseIconPath string `yaml:"baseIconPath"`
+	Formator     string `yaml:"formator"`
 }
+
+// type Preset map[string]string
+
+// type Preset interface{}
 
 func generateIcon(dir fs.DirEntry, preset string, content string, decorateIconPath string, _baseIconPath string, _formator string, decImgSize float64, fontSize int) {
 	var baseIconPath string
@@ -39,8 +48,8 @@ func generateIcon(dir fs.DirEntry, preset string, content string, decorateIconPa
 		}
 		defer configFile.Close()
 		var config Config
-		config.presets = make([]Preset, 0)
-		// config = yaml.Decoder(configFile);
+		// config.presets = make([]Preset, 0)
+		// config = yaml.Decoder(configFile)
 		decoder := yaml.NewDecoder(configFile)
 		err = decoder.Decode(&config)
 		if err != nil {
@@ -48,43 +57,51 @@ func generateIcon(dir fs.DirEntry, preset string, content string, decorateIconPa
 		}
 
 		// preset, exists := config.presets["蓝色"]
-		// preset, exists := config.presets[preset]
-		for key, value := range config.presets {
-			fmt.Println(key, value)
-		}
-
-		// if exists == false {
-		// 	log.Println("Preset not found")
-		// 	if _baseIconPath == "" {
-		// 		log.Fatal("No preset or base icon provided")
-		// 	}
-		// 	baseIconPath = _baseIconPath
-		// 	formator = _formator
-
+		preset, exists := config.Presets[preset]
+		// for key, value := range config.Presets {
+		// 	fmt.Println(key, value)
 		// }
-		// baseIconPath = preset.baseIconPath
-		// formator = preset.formator
+
+		if exists == false {
+			log.Println("Preset not found")
+			if _baseIconPath == "" {
+				log.Fatal("No preset or base icon provided")
+			}
+			baseIconPath = _baseIconPath
+			formator = _formator
+
+		}
+		baseIconPath = preset.BaseIconPath
+		formator = preset.Formator
 	}
 
+	_drawIcon(dir, baseIconPath, formator, content, decorateIconPath, decImgSize, fontSize)
+
+}
+
+func _drawIcon(dir fs.DirEntry, baseIconPath string, formator string, content string, decorateIconPath string, decImgSize float64, fontSize int) {
 	// ** 检查path
+	// !Open内部其实就是调用OpenFile……
 	baseIcon, err_baseIconPath := os.Open(baseIconPath)
 	decorateIcon, err_decorateIconpath := os.Open(decorateIconPath)
 	// @todo 添加对网络url支持
 	if err_baseIconPath != nil {
 		log.Fatal("BaseIcon not found")
 	}
-	if err_decorateIconpath == nil {
+	if err_decorateIconpath != nil {
 		log.Fatal("DecorateIcon not found")
 	}
 
-	_drawIcon(dir, baseIcon, formator, content, decorateIcon, decImgSize, fontSize)
-
-}
-
-func _drawIcon(dir fs.DirEntry, baseIcon fs.File, formator string, content string, decorateIcon fs.File, decImgSize float64, fontSize int) {
 	// ** 读取图片
-	baseImg, _, err_baseImg := image.Decode(baseIcon)
-	decImg, _, err_decImg := image.Decode(decorateIcon)
+	var baseImg, decImg image.Image
+	var err_baseImg, err_decImg error
+	if filepath.Ext(baseIconPath) == ".ico" {
+		baseImg, err_baseImg = ico.Decode(baseIcon)
+		decImg, err_decImg = ico.Decode(decorateIcon)
+	} else {
+		baseImg, _, err_baseImg = image.Decode(baseIcon)
+		decImg, _, err_decImg = image.Decode(decorateIcon)
+	}
 	if err_baseImg != nil {
 		log.Fatal(err_baseImg)
 	}
