@@ -89,6 +89,7 @@ func generateIcon(dir fs.DirEntry, preset, content, decorateIconPath, _baseIconP
 }
 
 // !重要参考https://blog.csdn.net/qq_40585384/article/details/124762939
+// @todo 添加颜色选项
 func _drawIcon(dir fs.DirEntry, baseIconPath, formator, content, decorateIconPath string, fontSize, decImgSize, yOffset int) {
 	// ** 检查path
 	// !Open内部其实就是调用OpenFile……
