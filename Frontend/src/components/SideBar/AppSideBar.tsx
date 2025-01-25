@@ -3,8 +3,11 @@
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuItem } from "../ui/sidebar";
 import { Input } from "../ui/input";
 import { ChangeEvent, useState } from "react";
-
-export default function SideBarApp({ curDir, handleCurDirChange }: { curDir: string, handleCurDirChange: (curDir: string) => void }) {
+interface Props {
+	curDir: string
+	handleCurDirChange: (curDir: string) => void
+}
+export default function SideBarApp({ curDir, handleCurDirChange }: Props) {
 	const [cwd, setCwd] = useState("")
 	const [dirs, setDirs] = useState(["Code", "Coding", "Game", "System"])
 	function handleCwdChange(e: ChangeEvent<HTMLInputElement>) {
@@ -15,14 +18,14 @@ export default function SideBarApp({ curDir, handleCurDirChange }: { curDir: str
 	return (
 		<Sidebar>
 			<SidebarContent className="w-60 h-full">
-				<SidebarGroup>
-					<SidebarHeader>
-						<Input id="dir_input" placeholder="Work Dir" type="text" value={cwd} onChange={handleCwdChange} multiple />
+				<SidebarGroup className="relativ">
+					<SidebarHeader className="sticky top-0 p-3 z-10 bg- filter backdrop-blur-sm">
+						<Input className="text-black bg-transparent" id="dir_input" placeholder="Work Dir" type="text" value={cwd} onChange={handleCwdChange} multiple />
 					</SidebarHeader>
 					<SidebarGroupContent>
 						<SidebarGroupLabel>文件夹列表</SidebarGroupLabel>
 						<SidebarMenu>
-							{dirs.map((dir, index) => (
+							{[...dirs, ...dirs, ...dirs, ...dirs, ...dirs, ...dirs].map((dir, index) => (
 								<SidebarMenuItem key={index} onClick={() => handleCurDirChange(dir)} className={`p-2 rounded-lg transition-all  ${curDir === dir ? "bg-primary text-white" : "hover:bg-secondary"}`}>
 									{dir}
 								</SidebarMenuItem>
