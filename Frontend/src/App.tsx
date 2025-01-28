@@ -5,11 +5,34 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './com
 import { Input } from './components/ui/input'
 import { Select, Slider, Text } from './components/PropsCard/Props'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from './components/ui/resizable'
+import { Form, FormField } from './components/ui/form'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { useForm } from 'react-hook-form'
 
 function App() {
   const [curDir, setCurDir] = useState('')
   const [presets, setPresets] = useState<string[]>(["蓝色", "绿色", "紫色"])
   const [previewImg, setPreviewImg] = useState('')
+  const formSchema = z.object({
+    preset: z.string().optional(),
+    baseIconPath: z.string().optional(),
+    content: z.string().optional(),
+    fontSize: z.number().optional(),
+    formator: z.string().optional(),
+    decorateIconPath: z.string().optional(),
+    decImgSize: z.number().optional(),
+    yOffset: z.number().optional(),
+  })
+  const form = useForm<z.infer<typeof formSchema>>({
+    // !要引入文档里面的@hookform/resolvers/zod和zod……
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+    }
+  })
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values)
+  }
   function handleCurDirChange(curDir: string) {
     setCurDir(curDir)
   }
@@ -28,25 +51,35 @@ function App() {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel>
-            <Card className='size-full'>
+            <Card className='size-full overflow-y-auto'>
               <CardHeader>
                 <CardTitle>Props</CardTitle>
                 <CardDescription>Icon生成配置</CardDescription>
               </CardHeader>
-              <CardContent className='gap-5 grid grid-cols-3 grid-rows-2'>
-                {/* //** 预设 */}
-                <Select title='预设' options={presets} />
-                <div></div>
-                <Text title='背景图片路径' value={""} handleValueChange={() => { }} />
-                {/* //** content */}
-                {/* @todo Plenties To Implement */}
-                <Text title='文字' value={""} handleValueChange={() => { }} />
-                <Slider title='字体大小' defaultValue={16} min={1} max={50} step={1} value={1} handleValueChange={() => { }} />
-                <Text title='格式字符' value={""} handleValueChange={() => { }} />
-                {/* //** DecImg */}
-                <Text title='图标路径' value={""} handleValueChange={() => { }} />
-                <Slider title='图标大小' defaultValue={50} min={20} max={1000} step={5} value={20} handleValueChange={() => { }} />
-                <Slider title='y轴偏移' defaultValue={10} min={-1000} max={1000} step={10} value={10} handleValueChange={() => { }} />
+              <CardContent>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className='gap-5 grid grid-cols-3 grid-rows-2'>
+                    {/* <FormField control={form.control} name='IconProps' render={({ filed }) => (
+                    <> */}
+                    {/* //** 预设 */}
+                    <Select form={form} title='预设' name='preset' options={presets} handleValueChange={() => { }} />
+                    <div></div>
+                    <Text form={form} title='背景图片路径' name='baseIconPath' value={""} handleValueChange={() => { }} />
+                    {/* //** content */}
+                    {/* @todo Plenties To Implement */}
+                    <Text form={form} title='文字' name='content' value={""} handleValueChange={() => { }} />
+                    <Slider form={form} title='字体大小' name='fontSize' defaultValue={16} min={1} max={50} step={1} value={1} handleValueChange={() => { }} />
+                    <Text form={form} title='格式字符' name='formator' value={""} handleValueChange={() => { }} />
+                    {/* //** DecImg */}
+                    <Text form={form} title='图标路径' name='decorateIconPath' value={""} handleValueChange={() => { }} />
+                    <Slider form={form} title='图标大小' name='decImgSize' defaultValue={50} min={20} max={1000} step={5} value={20} handleValueChange={() => { }} />
+                    <Slider form={form} title='y轴偏移' name='yOffset' defaultValue={10} min={-1000} max={1000} step={10} value={10} handleValueChange={() => { }} />
+                    {/* </> */}
+                    {/* // )}> */}
+                    {/* </FormField> */}
+                    <Input type='submit' value='生成' />
+                  </form>
+                </Form>
               </CardContent>
             </Card>
           </ResizablePanel>
