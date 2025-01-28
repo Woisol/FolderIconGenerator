@@ -62,18 +62,18 @@ function App() {
                     {/* <FormField control={form.control} name='IconProps' render={({ filed }) => (
                     <> */}
                     {/* //** 预设 */}
-                    <Select form={form} title='预设' name='preset' options={presets} handleValueChange={() => { }} />
+                    <Select form={form} title='预设' name='preset' options={presets} />
                     <div></div>
-                    <Text form={form} title='背景图片路径' name='baseIconPath' value={""} handleValueChange={() => { }} />
+                    <Text form={form} title='背景图片路径' name='baseIconPath' />
                     {/* //** content */}
                     {/* @todo Plenties To Implement */}
-                    <Text form={form} title='文字' name='content' value={""} handleValueChange={() => { }} />
-                    <Slider form={form} title='字体大小' name='fontSize' defaultValue={16} min={1} max={50} step={1} value={1} handleValueChange={() => { }} />
-                    <Text form={form} title='格式字符' name='formator' value={""} handleValueChange={() => { }} />
+                    <Text form={form} title='文字' name='content' />
+                    <Slider form={form} title='字体大小' name='fontSize' defaultValue={16} min={1} max={50} step={1} />
+                    <Text form={form} title='格式字符' name='formator' />
                     {/* //** DecImg */}
-                    <Text form={form} title='图标路径' name='decorateIconPath' value={""} handleValueChange={() => { }} />
-                    <Slider form={form} title='图标大小' name='decImgSize' defaultValue={50} min={20} max={1000} step={5} value={20} handleValueChange={() => { }} />
-                    <Slider form={form} title='y轴偏移' name='yOffset' defaultValue={10} min={-1000} max={1000} step={10} value={10} handleValueChange={() => { }} />
+                    <Text form={form} title='图标路径' name='decorateIconPath' />
+                    <Slider form={form} title='图标大小' name='decImgSize' defaultValue={50} min={20} max={1000} step={5} />
+                    <Slider form={form} title='y轴偏移' name='yOffset' defaultValue={10} min={-1000} max={1000} step={10} />
                     {/* </> */}
                     {/* // )}> */}
                     {/* </FormField> */}

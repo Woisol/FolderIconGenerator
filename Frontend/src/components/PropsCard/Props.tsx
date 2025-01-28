@@ -4,30 +4,30 @@ import { Input } from "../ui/input";
 import { Label as RadLabel } from "../ui/label";
 import { Select as RadSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Slider as RadSlider } from "../ui/slider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface SelectOption {
 	form: UseFormReturn
 	title: string;
 	name: string;
 	options: string[];
-	handleValueChange: (value: string) => void;
 }
 function Label({ title }: { title: string }) {
 	return <FormLabel className="ml-2" htmlFor={title}>{title}</FormLabel>
 }
-export function Select({ form, title, name, options, handleValueChange }: SelectOption) {
+export function Select({ form, title, name, options }: SelectOption) {
 	return (
 		<FormField control={form.control} name={name} render={({ field }) => (
 			<FormItem>
 				<FormLabel title={title} />
 				<FormControl>
-					<RadSelect {...field}>
+					<RadSelect onValueChange={(value) => form.setValue(name, value)} {...field}>
 						<SelectTrigger id={title}>
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent>
-							{options.map((preset) => (<SelectItem value={preset} onSelect={() => handleValueChange(preset)}>{preset}</SelectItem>))}
+							{options.map((preset) => (<SelectItem value={preset} >{preset}</SelectItem>))}
+							{/* onSelect={() => form.setValue(name, preset)} */}
 						</SelectContent>
 					</RadSelect>
 				</FormControl>
@@ -87,19 +87,21 @@ interface SliderOption {
 	// handleValueChange: (value: number) => void;
 }
 export function Slider({ form, title, name, defaultValue, min = 0, max, step }: SliderOption) {
-	const [sliderValue, setSliderValue] = useState(defaultValue)
+	// const [sliderValue, setSliderValue] = useState(defaultValue)
+	// !https://duhan.dev/posts/inserting-shadcn-slider-datepicker-into-react-hook-form/
+	useEffect(() => form.setValue(name, defaultValue))
 	return (
 		<FormField control={form.control} name={name} render={({ field }) => (
 			<FormItem className="fle">
 				<Label title={title} />
 				<div className="flex">
-					<RadSlider defaultValue={[defaultValue]} min={min} max={max} step={step} form={name} onValueChange={(values) => { setSliderValue(values[0]) }} />
 					<FormControl>
-						<Input type="hidden"  {...field} value={sliderValue} />
+						<RadSlider defaultValue={[defaultValue]} min={min} max={max} step={step} form={name} onValueChange={(values) => form.setValue(name, values[0])} />
+						{/* <Input type="hidden"  {...field} value={sliderValue} /> */}
 					</FormControl>
 					{/* // !wok一直报错……注意FormControl不能有多个Child！ */}
-					{/* <span className="mx-3">{form.getValues(name)}</span> */}
-					<span className="mx-3">{sliderValue}</span>
+					<span className="mx-3">{form.getValues(name)}</span>
+					{/* <span className="mx-3">{sliderValue}</span> */}
 				</div>
 				{/* <FormMessage /> */}
 			</FormItem>
