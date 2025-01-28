@@ -9,12 +9,15 @@ import { Form, FormField } from './components/ui/form'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useForm } from 'react-hook-form'
+import { Toaster } from './components/ui/sonner'
+import { toast } from 'sonner'
 
 function App() {
   const [curDir, setCurDir] = useState('')
   const [presets, setPresets] = useState<string[]>(["蓝色", "绿色", "紫色"])
   const [previewImg, setPreviewImg] = useState('')
   const formSchema = z.object({
+    dir: z.string().optional(),
     preset: z.string().optional(),
     baseIconPath: z.string().optional(),
     content: z.string().optional(),
@@ -31,10 +34,14 @@ function App() {
     }
   })
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    // console.log(values)
+    toast("生成中")
+
   }
   function handleCurDirChange(curDir: string) {
     setCurDir(curDir)
+    form.setValue('dir', curDir)
+
   }
 
   return (
@@ -85,6 +92,7 @@ function App() {
           </ResizablePanel>
         </ResizablePanelGroup>
       </main>
+      <Toaster />
     </SidebarProvider>
   )
 }
