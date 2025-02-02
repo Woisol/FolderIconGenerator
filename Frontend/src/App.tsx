@@ -13,6 +13,7 @@ import { Toaster } from './components/ui/sonner'
 import { toast } from 'sonner'
 
 function App() {
+  const [cwd, setCwd] = useState("")
   const [curDir, setCurDir] = useState('')
   const [presets, setPresets] = useState<string[]>(["蓝色", "绿色", "紫色"])
   const [previewImg, setPreviewImg] = useState('')
@@ -34,19 +35,23 @@ function App() {
     }
   })
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // console.log(values)
+    console.log(values)
+    if (!values.dir) {
+      toast("未选择生成文件夹！")
+      return
+    }
     toast("生成中")
 
   }
   function handleCurDirChange(curDir: string) {
     setCurDir(curDir)
-    form.setValue('dir', curDir)
-
+    form.setValue('dir', cwd.replace(/\/$/g, "") + "/" + curDir)
+    // form.setValue('dir',)
   }
 
   return (
     <SidebarProvider className=''>
-      <SideBarApp curDir={curDir} handleCurDirChange={handleCurDirChange} />
+      <SideBarApp cwd={cwd} setCwd={setCwd} curDir={curDir} handleCurDirChange={handleCurDirChange} />
       <main className='w-full h-screen p-4 flex flex-col items-center'>
         <div className="w-full">
           <SidebarTrigger className='size-10' />

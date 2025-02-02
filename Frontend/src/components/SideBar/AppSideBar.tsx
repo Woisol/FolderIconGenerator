@@ -4,11 +4,13 @@ import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGrou
 import { Input } from "../ui/input";
 import { ChangeEvent, useState } from "react";
 interface Props {
+	cwd: string
+	setCwd: (cwd: string) => void
 	curDir: string
 	handleCurDirChange: (curDir: string) => void
 }
-export default function SideBarApp({ curDir, handleCurDirChange }: Props) {
-	const [cwd, setCwd] = useState("")
+export default function SideBarApp({ cwd, setCwd, curDir, handleCurDirChange }: Props) {
+	// const [cwd, setCwd] = useState("")
 	const [dirs, setDirs] = useState(["Code", "Coding", "Game", "System"])
 	function handleCwdChange(e: ChangeEvent<HTMLInputElement>) {
 		// dtodo To Implement 调用go打开文件夹选择框
