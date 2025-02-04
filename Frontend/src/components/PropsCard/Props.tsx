@@ -88,7 +88,7 @@ interface SliderOption {
 export function Slider({ form, title, name, defaultValue, min = 0, max, step }: SliderOption) {
 	// const [sliderValue, setSliderValue] = useState(defaultValue)
 	// !https://duhan.dev/posts/inserting-shadcn-slider-datepicker-into-react-hook-form/
-	useEffect(() => form.setValue(name, defaultValue))
+	useEffect(() => form.setValue(name, defaultValue), [])
 	return (
 		<FormField control={form.control} name={name} render={() => (
 			<FormItem className="fle">

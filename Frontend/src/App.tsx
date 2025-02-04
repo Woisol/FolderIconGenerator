@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar'
 import SideBarApp from './components/SideBar/AppSideBar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card'
@@ -150,7 +150,7 @@ function App() {
                     {/* //** DecImg */}
                     <Text form={form} title='图标路径' name='decorateIconPath' />
                     <Slider form={form} title='图标大小' name='decImgSize' defaultValue={50} min={20} max={1000} step={5} />
-                    <Slider form={form} title='y轴偏移' name='yOffset' defaultValue={10} min={-1000} max={1000} step={10} />
+                    <Slider form={form} title='y轴偏移' name='yOffset' defaultValue={10} min={-200} max={200} step={5} />
                     {/* </> */}
                     {/* // )}> */}
                     {/* </FormField> */}

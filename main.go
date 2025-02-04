@@ -33,6 +33,10 @@ func sayhelloName(w http.ResponseWriter, r *http.Request) {
 	// }
 	fmt.Fprintf(w, "Hello astaxie!") // 这个写入到 w 的是输出到客户端的
 }
+
+// const HTML_PATH = "./Frontend/dist"
+const HTML_PATH = "."
+
 func main() {
 	// yamlTest()
 	// updateDir("")
@@ -41,7 +45,6 @@ func main() {
 	// generateIcon(curDirs[0], "蓝色", "Downloads", "D:/D Icons/Old/download.ico", "", "", 30, 80, 10)
 	// http.HandleFunc("/", sayhelloName)
 	// !go没有箭头函数要这样写……
-	const HTML_PATH = "./Frontend/dist"
 	http.Handle("/", http.FileServer(http.Dir(HTML_PATH)))
 
 	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -103,6 +106,7 @@ func main() {
 		json.Unmarshal(body, &req)
 
 		generateIcon(path.Base(req.Dir), req.Preset, req.Content, req.DecorateIconPath, req.BaseIconPath, req.Formator, req.FontSize, req.DecImgSize, req.YOffset)
+		// !主要在于vite的缓存问题不需要加
 		// w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		// w.Header().Set("Pragma", "no-cache")
 		// w.Header().Set("Expires", "0")

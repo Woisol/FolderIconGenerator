@@ -33,7 +33,9 @@ func generateIcon(dir string, preset, content, decorateIconPath, _baseIconPath, 
 	if preset == "" {
 		// **不使用预设
 		if _baseIconPath == "" {
-			log.Fatal("No preset or base icon provided")
+			log.Println("No preset or base icon provided")
+			return
+
 		}
 		baseIconPath = _baseIconPath
 		formator = _formator
@@ -53,7 +55,8 @@ func generateIcon(dir string, preset, content, decorateIconPath, _baseIconPath, 
 		if exists == false {
 			log.Println("Preset not found")
 			if _baseIconPath == "" {
-				log.Fatal("No preset or base icon provided")
+				log.Println("No preset or base icon provided")
+				return
 			}
 			baseIconPath = _baseIconPath
 			formator = _formator
@@ -147,7 +150,7 @@ func _drawIcon(dir string, baseIconPath, formator, content, decorateIconPath str
 	// ** 绘制文字
 	drawString(genImg, content, fontSize, float64(width)/2, float64((height+decHeight)/2+icoTextOffset+yOffset))
 
-	outImg, _ := os.Create(dir + ".ico")
+	outImg, _ := os.Create(HTML_PATH + "/" + dir + ".ico")
 	ico.Encode(outImg, genImg)
 
 }
