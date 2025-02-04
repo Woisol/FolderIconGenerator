@@ -2,10 +2,10 @@ package main
 
 import (
 	// "util"
+	"fmt"
 	"io/fs"
 	"net/http"
-
-	"github.com/sirupsen/logrus/hooks/writer"
+	// "github.com/sirupsen/logrus/hooks/writer"
 	// "FolderIconsGenSet/util"
 )
 
@@ -30,10 +30,18 @@ func main() {
 	// generateIcon(curDirs[0], "蓝色", "", "D:/D Icons/Old/download.ico", "", "", 30, 80, 10)
 	// generateIcon(curDirs[0], "蓝色", "Downloads", "", "", "", 30, 80, 10)
 	// generateIcon(curDirs[0], "蓝色", "Downloads", "D:/D Icons/Old/download.ico", "", "", 30, 80, 10)
-	http.HandleFunc("/", sayhelloName)
-	http.ListenAndServe(":80", nil)
+	// http.HandleFunc("/", sayhelloName)
 	// !go没有箭头函数要这样写……
-	http.HandleFunc("/", func(writer http.ResponseWriter, res http.Request) {
-		writer.Write(fs.File("/Frontend/public/"))
-	})
+	const HTML_PATH = "./Frontend/dist"
+	http_fs := http.FileServer(http.Dir(HTML_PATH))
+	http.Handle("/", http_fs)
+	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	// 	// writer.Write(fs.File("/Frontend/dist/index.html"))
+	// 	// f, err := fs.ReadFile(http.Dir("."))
+	// 	// if err != nil {
+	// 	// 	log.Fatal(err)
+	// 	// }
+	// 	http.ServeFile(w, r, HTML_PATH)
+	// })
+	http.ListenAndServe(":6002", nil)
 }
