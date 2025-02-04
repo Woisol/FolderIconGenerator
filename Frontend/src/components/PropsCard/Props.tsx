@@ -1,16 +1,15 @@
 import { UseFormReturn } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { Label as RadLabel } from "../ui/label";
 import { Select as RadSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Slider as RadSlider } from "../ui/slider";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface SelectOption {
 	form: UseFormReturn
 	title: string;
 	name: string;
-	options: string[];
+	options?: string[];
 }
 function Label({ title }: { title: string }) {
 	return <FormLabel className="ml-2" htmlFor={title}>{title}</FormLabel>
@@ -26,7 +25,7 @@ export function Select({ form, title, name, options }: SelectOption) {
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent>
-							{options.map((preset) => (<SelectItem value={preset} >{preset}</SelectItem>))}
+							{options?.map((preset) => (<SelectItem value={preset} >{preset}</SelectItem>))}
 							{/* onSelect={() => form.setValue(name, preset)} */}
 						</SelectContent>
 					</RadSelect>
@@ -91,7 +90,7 @@ export function Slider({ form, title, name, defaultValue, min = 0, max, step }: 
 	// !https://duhan.dev/posts/inserting-shadcn-slider-datepicker-into-react-hook-form/
 	useEffect(() => form.setValue(name, defaultValue))
 	return (
-		<FormField control={form.control} name={name} render={({ field }) => (
+		<FormField control={form.control} name={name} render={() => (
 			<FormItem className="fle">
 				<Label title={title} />
 				<div className="flex">

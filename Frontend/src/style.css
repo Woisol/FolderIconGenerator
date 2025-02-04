@@ -86,4 +86,10 @@
 .btn-hover{
   @apply hover:bg-secondary
 }
+.btn-scale{
+  @apply transition-all duration-300 hover:scale-110 active:scale-90
+}
+.btn-scale-sm{
+  @apply transition-all duration-300 hover:scale-105 active:scale-95
+}
 
