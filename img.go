@@ -15,7 +15,8 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
-	"io/fs"
+
+	// "io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -26,7 +27,7 @@ import (
 
 // type Preset interface{}
 
-func generateIcon(dir fs.DirEntry, preset, content, decorateIconPath, _baseIconPath, _formator string, fontSize, decImgSize, yOffset int) {
+func generateIcon(dir string, preset, content, decorateIconPath, _baseIconPath, _formator string, fontSize, decImgSize, yOffset int) {
 	var baseIconPath string
 	var formator string
 	if preset == "" {
@@ -68,7 +69,7 @@ func generateIcon(dir fs.DirEntry, preset, content, decorateIconPath, _baseIconP
 
 // !重要参考https://blog.csdn.net/qq_40585384/article/details/124762939
 // @todo 添加颜色选项
-func _drawIcon(dir fs.DirEntry, baseIconPath, formator, content, decorateIconPath string, fontSize, decImgSize, yOffset int) {
+func _drawIcon(dir string, baseIconPath, formator, content, decorateIconPath string, fontSize, decImgSize, yOffset int) {
 	// ** 检查path
 	// !Open内部其实就是调用OpenFile……
 	baseIcon, err_baseIconPath := os.Open(baseIconPath)
@@ -76,7 +77,7 @@ func _drawIcon(dir fs.DirEntry, baseIconPath, formator, content, decorateIconPat
 	// err_decorateIconpath
 	// @todo 添加对网络url支持
 	if err_baseIconPath != nil {
-		log.Fatal("BaseIcon not found")
+		// log.Fatal("BaseIcon not found")
 	}
 	// if err_decorateIconpath != nil {
 	// 	log.Fatal("DecorateIcon not found")
@@ -146,7 +147,7 @@ func _drawIcon(dir fs.DirEntry, baseIconPath, formator, content, decorateIconPat
 	// ** 绘制文字
 	drawString(genImg, content, fontSize, float64(width)/2, float64((height+decHeight)/2+icoTextOffset+yOffset))
 
-	outImg, _ := os.Create(dir.Name() + ".ico")
+	outImg, _ := os.Create(dir + ".ico")
 	ico.Encode(outImg, genImg)
 
 }

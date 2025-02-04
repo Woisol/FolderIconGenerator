@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar'
 import SideBarApp from './components/SideBar/AppSideBar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card'
@@ -21,6 +21,8 @@ function App() {
   const [dirs, setDirs] = useState(["Code", "Coding", "Game", "System"])
   const [curDir, setCurDir] = useState('')
   const [presets, setPresets] = useState<string[]>()//["蓝色", "绿色", "紫色"]
+  // const imgRef = useRef()
+  const [imgKey, setImgKey] = useState(0)
   const [previewImg, setPreviewImg] = useState('')
   const formSchema = z.object({
     dir: z.string().optional(),
@@ -83,14 +85,23 @@ function App() {
     setCurDir(curDir)
     form.setValue('dir', cwd.replace(/\/$/g, "") + "/" + curDir)
     // ~~form.setValue('dir',)
+
+    preGenerate();
   }
   function preGenerate() {
-    type _data = { img: string }
-    axios.post('/generate', form.getValues()).then(res => {
-      setPreviewImg((res.data as _data).img)
-    }).catch(err => {
-      toast("生成失败，错误：" + err)
-    })
+    // type _data = { img: string }
+    debounce(() => {
+      axios.post('/generate', form.getValues()).then(res => {
+        // setPreviewImg("")
+        // setTimeout(() => {
+        setPreviewImg("/" + res.data)
+        // }, 100)
+        // (imgRef.current as HTMLImageElement)
+        setImgKey(imgKey => imgKey + 1)
+      }).catch(err => {
+        toast("生成失败，错误：" + err)
+      })
+    }, 600)
   }
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
@@ -111,7 +122,8 @@ function App() {
         {/* @todo Resizable To Implement */}
         <ResizablePanelGroup direction='vertical'>
           <ResizablePanel className="relative w-full min-h-20 max-h60 p-8">
-            <img className='h-full max-h-52 mx-auto' src={previewImg} alt="Preview" />
+            <img key={imgKey} className='h-full max-h-52 mx-auto' src={previewImg} alt="Preview" />
+            {/* key={imgKey} */}
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel>
@@ -126,6 +138,7 @@ function App() {
                     {/* <FormField control={form.control} name='IconProps' render={({ filed }) => (
                     <> */}
                     {/* //** 预设 */}
+                    {/* @todo 存在更新后form数据重置的问题 */}
                     <Select form={form} title='预设' name='preset' options={presets} />
                     <div></div>
                     <Text form={form} title='背景图片路径' name='baseIconPath' />

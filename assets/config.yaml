@@ -3,13 +3,13 @@ presets:
     baseIconPath: "D:/Picture/ico/cakeOS ICO/Folder BLUE .ico"
     formator: ""
   绿色:
-    baseIconPath: "D:/Picture/ico/cakeOS ICO/Folder GREEN.ico"
+    baseIconPath: "D:/Picture/ico/cakeOS ICO/Folder GREEN .ico"
     formator: ""
   橙色:
-    baseIconPath: "D:/Picture/ico/cakeOS ICO/Folder ORANGE.ico"
+    baseIconPath: "D:/Picture/ico/cakeOS ICO/Folder ORANGE .ico"
     formator: ""
   紫色:
-    baseIconPath: "D:/Picture/ico/cakeOS ICO/Folder PURPLE.ico"
+    baseIconPath: "D:/Picture/ico/cakeOS ICO/Folder PURPLE .ico"
     formator: ""
   红色:
     baseIconPath: "D:/Picture/ico/cakeOS ICO/Folder RED .ico"

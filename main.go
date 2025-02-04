@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	// "os"
+	"path"
 
 	// "io/fs"
 	// "log"
@@ -83,6 +85,28 @@ func main() {
 		// log.Fatal(err)
 		// }
 		fmt.Fprint(w, string(dirsStr))
+	})
+	http.HandleFunc("/generate", func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Dir              string `json:"dir"`
+			Preset           string `json:"preset"`
+			Content          string `json:"content"`
+			DecorateIconPath string `json:"decorateIconPath"`
+			BaseIconPath     string `json:"baseIconPath"`
+			Formator         string `json:"formator"`
+			FontSize         int    `json:"fontSize"`
+			DecImgSize       int    `json:"decImgSize"`
+			YOffset          int    `json:"yOffset"`
+		}
+		body, _ := io.ReadAll(r.Body)
+		defer r.Body.Close()
+		json.Unmarshal(body, &req)
+
+		generateIcon(path.Base(req.Dir), req.Preset, req.Content, req.DecorateIconPath, req.BaseIconPath, req.Formator, req.FontSize, req.DecImgSize, req.YOffset)
+		// w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		// w.Header().Set("Pragma", "no-cache")
+		// w.Header().Set("Expires", "0")
+		fmt.Fprint(w, path.Base(req.Dir)+".ico")
 	})
 	http.ListenAndServe(":6002", nil)
 }

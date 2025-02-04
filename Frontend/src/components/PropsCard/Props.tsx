@@ -18,7 +18,7 @@ export function Select({ form, title, name, options }: SelectOption) {
 	return (
 		<FormField control={form.control} name={name} render={({ field }) => (
 			<FormItem>
-				<FormLabel title={title} />
+				<Label title={title} />
 				<FormControl>
 					<RadSelect onValueChange={(value) => form.setValue(name, value)} {...field}>
 						<SelectTrigger id={title}>
