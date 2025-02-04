@@ -103,7 +103,7 @@ function App() {
 
   return (
     <SidebarProvider className=''>
-      <SideBarApp cwd={cwd} handleCwdChange={handleCwdChange} dirs={dirs} curDir={curDir} handleCurDirChange={handleCurDirChange} />
+      <SideBarApp cwd={cwd} handleCwdChange={handleCwdChange} dirs={dirs} handleDirDelete={(index) => { setDirs(dirs.filter((_, i) => i !== index)) }} curDir={curDir} handleCurDirChange={handleCurDirChange} />
       <main className='w-full h-screen p-4 flex flex-col items-center'>
         <div className="w-full">
           <SidebarTrigger className='size-10' />
