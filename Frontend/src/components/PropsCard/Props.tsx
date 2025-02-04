@@ -37,17 +37,20 @@ export function Select({ form, title, name, options }: SelectOption) {
 }
 interface TextOption {
 	form: UseFormReturn;
+	defaultValue?: string;
 	title: string;
 	name: string;
 	// handleValueChange: (value: string) => void;
 }
-export function Text({ form, title, name }: TextOption) {
+export function Text({ form, defaultValue, title, name }: TextOption) {
+	if (defaultValue && !form.getValues(name)) form.setValue(name, defaultValue)
 	return (
 		<FormField control={form.control} name={name} render={({ field }) => (
 			<FormItem>
 				<Label title={title} />
 				<FormControl>
-					<Input type='text' placeholder={title}  {...field} />
+					{/* defaultValue ? defaultValue : */}
+					<Input type='text' placeholder={title} defaultValue={defaultValue}  {...field} />
 				</FormControl>
 				<FormMessage />
 			</FormItem>

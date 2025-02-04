@@ -17,7 +17,7 @@ import axios from 'axios'
 import { debounce } from './lib/utils'
 
 function App() {
-  const [cwd, setCwd] = useState("D:")
+  const [cwd, setCwd] = useState("D:/")
   const [dirs, setDirs] = useState(["Code", "Coding", "Game", "System"])
   const [curDir, setCurDir] = useState('')
   const [presets, setPresets] = useState<string[]>()//["蓝色", "绿色", "紫色"]
@@ -34,6 +34,7 @@ function App() {
     decorateIconPath: z.string().optional(),
     decImgSize: z.number().optional(),
     yOffset: z.number().optional(),
+    genPath: z.string().optional(),
   })
   const form = useForm<z.infer<typeof formSchema>>({
     // !要引入文档里面的@hookform/resolvers/zod和zod……
@@ -46,6 +47,7 @@ function App() {
   }, [])
 
   function handleRefresh() {
+    handleCwdChange({ target: { value: cwd } } as ChangeEvent<HTMLInputElement>)
     axios.get('/refresh').then(res => {
       type _data = { Presets: string[] }
       // const _presets = Array.from((res.data as _data).Presets)
@@ -110,6 +112,14 @@ function App() {
       return
     }
     toast("已发送请求")
+
+    debounce(() => {
+      axios.post('/set', { dir: form.getValues("dir"), genPath: form.getValues("genPath") }).then(res => {
+        toast(res.data)
+      }).catch(err => {
+        toast("无法设置图标，错误：" + err)
+      })
+    }, 600)
   }
 
   return (
@@ -134,9 +144,7 @@ function App() {
               </CardHeader>
               <CardContent>
                 <Form {...form}>
-                  <form onChange={preGenerate} onSubmit={form.handleSubmit(onSubmit)} className='gap-5 grid grid-cols-3 grid-rows-2'>
-                    {/* <FormField control={form.control} name='IconProps' render={({ filed }) => (
-                    <> */}
+                  <form onChange={preGenerate} onSubmit={form.handleSubmit(onSubmit)} className='gap-5 grid grid-cols-3 grid-rows-2 items-end'>
                     {/* //** 预设 */}
                     {/* @todo 存在更新后form数据重置的问题 */}
                     <Select form={form} title='预设' name='preset' options={presets} />
@@ -145,15 +153,14 @@ function App() {
                     {/* //** content */}
                     {/* @todo Plenties To Implement */}
                     <Text form={form} title='文字' name='content' />
-                    <Slider form={form} title='字体大小' name='fontSize' defaultValue={16} min={1} max={50} step={1} />
+                    <Slider form={form} title='字体大小' name='fontSize' defaultValue={16} min={1} max={100} step={1} />
                     <Text form={form} title='格式字符' name='formator' />
                     {/* //** DecImg */}
                     <Text form={form} title='图标路径' name='decorateIconPath' />
                     <Slider form={form} title='图标大小' name='decImgSize' defaultValue={50} min={20} max={1000} step={5} />
                     <Slider form={form} title='y轴偏移' name='yOffset' defaultValue={10} min={-200} max={200} step={5} />
-                    {/* </> */}
-                    {/* // )}> */}
-                    {/* </FormField> */}
+                    <Text form={form} defaultValue='D:/D Icons' title='输出路径' name='genPath' />
+                    <div></div>
                     <Input type='submit' value='生成' />
                   </form>
                 </Form>

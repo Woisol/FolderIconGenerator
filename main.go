@@ -20,22 +20,9 @@ var curDirs = []string{}
 
 // var curDirs = []fs.DirEntry{}
 
-func sayhelloName(w http.ResponseWriter, r *http.Request) {
-	// !from https://learnku.com/docs/build-web-application-with-golang/032-go-builds-a-web-server/3169
-	r.ParseForm() // 解析参数，默认是不会解析的
-	// fmt.Println(r.Form)  // 这些信息是输出到服务器端的打印信息
-	// fmt.Println("path", r.URL.Path)
-	// fmt.Println("scheme", r.URL.Scheme)
-	// fmt.Println(r.Form["url_long"])
-	// for k, v := range r.Form {
-	// 	fmt.Println("key:", k)
-	// 	fmt.Println("val:", strings.Join(v, ""))
-	// }
-	fmt.Fprintf(w, "Hello astaxie!") // 这个写入到 w 的是输出到客户端的
-}
+const HTML_PATH = "./Frontend/dist"
 
-// const HTML_PATH = "./Frontend/dist"
-const HTML_PATH = "."
+// const HTML_PATH = "."
 
 func main() {
 	// yamlTest()
@@ -100,6 +87,7 @@ func main() {
 			FontSize         int    `json:"fontSize"`
 			DecImgSize       int    `json:"decImgSize"`
 			YOffset          int    `json:"yOffset"`
+			// GenPath          string `json:"genPath"`
 		}
 		body, _ := io.ReadAll(r.Body)
 		defer r.Body.Close()
@@ -111,6 +99,18 @@ func main() {
 		// w.Header().Set("Pragma", "no-cache")
 		// w.Header().Set("Expires", "0")
 		fmt.Fprint(w, path.Base(req.Dir)+".ico")
+	})
+	http.HandleFunc("/set", func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Dir     string `json:"dir"`
+			GenPath string `json:"genPath"`
+		}
+		body, _ := io.ReadAll(r.Body)
+		defer r.Body.Close()
+		json.Unmarshal(body, &req)
+
+		setIcon(req.Dir, HTML_PATH+"/"+path.Base(req.Dir)+".ico", req.GenPath+"/"+path.Base(req.Dir)+".ico")
+		fmt.Fprint(w, "成功设置"+req.Dir+"的图标")
 	})
 	http.ListenAndServe(":6002", nil)
 }

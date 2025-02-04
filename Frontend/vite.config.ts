@@ -33,6 +33,10 @@ export default defineConfig({
         target: "http://localhost:6002",
         changeOrigin: true,
       },
+      "/set": {
+        target: "http://localhost:6002",
+        changeOrigin: true,
+      },
       "^/(.*).ico": {
         target: "http://localhost:6002",
         changeOrigin: true,
