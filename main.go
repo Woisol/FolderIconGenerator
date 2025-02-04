@@ -2,14 +2,21 @@ package main
 
 import (
 	// "util"
+	"encoding/json"
 	"fmt"
-	"io/fs"
+	"io"
+
+	// "io/fs"
+	// "log"
 	"net/http"
 	// "github.com/sirupsen/logrus/hooks/writer"
 	// "FolderIconsGenSet/util"
 )
 
-var curDirs = []fs.DirEntry{}
+// !加个{}……
+var curDirs = []string{}
+
+// var curDirs = []fs.DirEntry{}
 
 func sayhelloName(w http.ResponseWriter, r *http.Request) {
 	// !from https://learnku.com/docs/build-web-application-with-golang/032-go-builds-a-web-server/3169
@@ -33,8 +40,8 @@ func main() {
 	// http.HandleFunc("/", sayhelloName)
 	// !go没有箭头函数要这样写……
 	const HTML_PATH = "./Frontend/dist"
-	http_fs := http.FileServer(http.Dir(HTML_PATH))
-	http.Handle("/", http_fs)
+	http.Handle("/", http.FileServer(http.Dir(HTML_PATH)))
+
 	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 	// 	// writer.Write(fs.File("/Frontend/dist/index.html"))
 	// 	// f, err := fs.ReadFile(http.Dir("."))
@@ -43,5 +50,39 @@ func main() {
 	// 	// }
 	// 	http.ServeFile(w, r, HTML_PATH)
 	// })
+	http.HandleFunc("/refresh", func(w http.ResponseWriter, r *http.Request) {
+		var config Config
+		yamlDecode("assets/config.yaml", &config)
+		bytes, err := json.Marshal(config)
+		if err != nil {
+			fmt.Fprint(w, "Error: "+err.Error())
+			return
+		}
+		// !这个时候就体现go结构体导出要大写的问题了……
+		fmt.Fprint(w, string(bytes))
+	})
+
+	http.HandleFunc("/getDirs", func(w http.ResponseWriter, r *http.Request) {
+		var request struct {
+			Cwd string `json:"cwd"`
+		}
+		body, _ := io.ReadAll(r.Body)
+		// if err != nil {
+		// log.Fatal(err)
+		// }
+		defer r.Body.Close()
+
+		// !不加&不会报错但是警告
+		json.Unmarshal(body, &request)
+
+		updateDir(request.Cwd)
+		// updateDir(r.GetBody().dirs)
+		// !log得极其不标准……
+		dirsStr, _ := json.Marshal(curDirs)
+		// if err != nil {
+		// log.Fatal(err)
+		// }
+		fmt.Fprint(w, string(dirsStr))
+	})
 	http.ListenAndServe(":6002", nil)
 }

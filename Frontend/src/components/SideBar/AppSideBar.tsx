@@ -25,7 +25,7 @@ export default function SideBarApp({ cwd, handleCwdChange, dirs, curDir, handleC
 						<SidebarGroupLabel>文件夹列表</SidebarGroupLabel>
 						<SidebarMenu>
 							{/* {[...dirs, ...dirs, ...dirs, ...dirs, ...dirs, ...dirs].map((dir, index) => ( */}
-							{dirs.map((dir, index) => (
+							{dirs?.map((dir, index) => (
 								<SidebarMenuItem key={index} onClick={() => handleCurDirChange(dir)} className={`p-2 rounded-lg transition-all  ${curDir === dir ? "bg-primary text-white" : "hover:bg-secondary"}`}>
 									{dir}
 								</SidebarMenuItem>

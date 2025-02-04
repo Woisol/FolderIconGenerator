@@ -17,4 +17,22 @@ export default defineConfig({
       // "@": "./src"
     },
   },
+  server: {
+    proxy: {
+      // "/"
+      "/refresh": {
+        target: "http://localhost:6002",
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+      "/getDirs": {
+        target: "http://localhost:6002",
+        changeOrigin: true,
+      },
+      "/generate": {
+        target: "http://localhost:6002",
+        changeOrigin: true,
+      },
+    }
+  }
 })

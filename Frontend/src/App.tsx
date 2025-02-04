@@ -14,6 +14,7 @@ import { toast } from 'sonner'
 import { Button } from './components/ui/button'
 import { RefreshCcw } from 'lucide-react'
 import axios from 'axios'
+import { debounce } from './lib/utils'
 
 function App() {
   const [cwd, setCwd] = useState("D:")
@@ -44,8 +45,11 @@ function App() {
 
   function handleRefresh() {
     axios.get('/refresh').then(res => {
-      type _data = { presets: string[] }
-      setPresets((res.data as _data).presets)
+      type _data = { Presets: string[] }
+      // const _presets = Array.from((res.data as _data).Presets)
+      const _presets = Object.keys((res.data as _data).Presets)
+      // console.log(_presets)
+      setPresets(_presets)
     })
       .catch(err => {
         toast("无法连接到服务器，请确认后端是否被意外关闭。ERR：", err.message)
@@ -53,20 +57,27 @@ function App() {
   }
   function handleCwdChange(e: ChangeEvent<HTMLInputElement>) {
     // dtodo To Implement 调用go打开文件夹选择框
+    setCurDir("")
     setCwd(e.target.value)
     // **获取文件夹列表
-    axios.get('/getDirs', {}).then((res) => {
-      if (res.status === 200 && !(res.data as string).startsWith("<!doctype html>"))
-        setDirs(res.data);
-      else {
-        setDirs([])
-        toast("获取文件夹列表失败，返回数据：" + res.data)
-      }
-    })
-      .catch(err => {
-        setDirs([])
-        toast("获取文件夹列表失败，错误：" + err)
+    debounce(() => {
+      axios.post('/getDirs', { cwd: e.target.value }).then((res) => {
+        // @todo 删去后面的判断
+        if (res.status === 200 && !(typeof res.data === "string" && (res.data as string).startsWith("<!doctype html>"))) {
+          // console.log((res.data as string).replace(/ /g, ','))
+          // const dirs = JSON.parse(res.data as string)
+          setDirs(res.data);
+        }
+        else {
+          setDirs([])
+          toast("获取文件夹列表失败，返回数据：" + res.data)
+        }
       })
+        .catch(err => {
+          setDirs([])
+          toast("获取文件夹列表失败，错误：" + err)
+        })
+    }, 600)
   }
   function handleCurDirChange(curDir: string) {
     setCurDir(curDir)

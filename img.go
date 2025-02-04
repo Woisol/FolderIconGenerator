@@ -19,21 +19,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-
-	"gopkg.in/yaml.v3"
+	// "gopkg.in/yaml.v3"
 )
-
-type Config struct {
-	// presets []Preset `yaml:"presets"`
-	// presets map[string]Preset `yaml:"presets"`
-	// !极其神奇……此处必须要大写，也不是要求不同，删去一个字母依然无法读取
-	Presets map[string]Preset `yaml:"presets"`
-}
-
-type Preset struct {
-	BaseIconPath string `yaml:"baseIconPath"`
-	Formator     string `yaml:"formator"`
-}
 
 // type Preset map[string]string
 
@@ -51,19 +38,10 @@ func generateIcon(dir fs.DirEntry, preset, content, decorateIconPath, _baseIconP
 		formator = _formator
 	} else {
 		// **使用预设
-		configFile, err := os.Open("assets/config.yaml")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer configFile.Close()
 		var config Config
 		// config.presets = make([]Preset, 0)
 		// config = yaml.Decoder(configFile)
-		decoder := yaml.NewDecoder(configFile)
-		err = decoder.Decode(&config)
-		if err != nil {
-			log.Fatal(err)
-		}
+		yamlDecode("assets/config.yaml", &config)
 
 		// preset, exists := config.presets["蓝色"]
 		preset, exists := config.Presets[preset]
