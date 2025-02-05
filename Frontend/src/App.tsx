@@ -92,7 +92,11 @@ function App() {
   }
   function preGenerate() {
     // type _data = { img: string }
+    // **预处理path……
+    form.setValue('baseIconPath', form.getValues('baseIconPath')?.replace(/\\/g, "/").replace(/"/g, ""))
+    form.setValue('decorateIconPath', form.getValues('decorateIconPath')?.replace(/\\/g, "/").replace(/"/g, ""))
     debounce(() => {
+      console.log(form.getValues())
       axios.post('/generate', form.getValues()).then(res => {
         // setPreviewImg("")
         // setTimeout(() => {

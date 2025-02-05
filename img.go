@@ -6,6 +6,7 @@ import (
 
 	ico "github.com/biessek/golang-ico"
 	"github.com/fogleman/gg"
+	"github.com/gorilla/rsvg"
 	"golang.org/x/image/font"
 
 	// !go graph……估计是比较重量级的库了……
@@ -69,7 +70,7 @@ func generateIcon(dir string, preset, content, decorateIconPath, _baseIconPath, 
 		// formator = preset.Formator
 	}
 
-	_drawIcon(dir, baseIconPath, _formator, content, decorateIconPath, fontSize, decImgSize, yOffset)
+	_drawIcon(dir, baseIconPath, _formator, content, strings.ReplaceAll(decorateIconPath, `\"`, `"`), fontSize, decImgSize, yOffset)
 
 }
 
@@ -94,9 +95,15 @@ func _drawIcon(dir, baseIconPath, formator, content, decorateIconPath string, fo
 	var err_baseImg, err_decImg error
 	if filepath.Ext(baseIconPath) == ".ico" {
 		baseImg, err_baseImg = ico.Decode(baseIcon)
-		decImg, err_decImg = ico.Decode(decorateIcon)
 	} else {
 		baseImg, _, err_baseImg = image.Decode(baseIcon)
+	}
+	if filepath.Ext(decorateIconPath) == ".ico" {
+		decImg, err_decImg = ico.Decode(decorateIcon)
+	} else if filepath.Ext(decorateIconPath) == ".svg" {
+		// rsvg
+		log.Println("ERR: 暂不支持svg")
+	} else {
 		decImg, _, err_decImg = image.Decode(decorateIcon)
 	}
 	if err_baseImg != nil {
