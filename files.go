@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"os/exec"
 
 	// "path"
 
@@ -23,7 +24,7 @@ type Config struct {
 }
 type Preset struct {
 	BaseIconPath string `yaml:"baseIconPath"`
-	Formator     string `yaml:"formator"`
+	// Formator     string `yaml:"formator"`
 }
 
 func updateDir(cwd string) {
@@ -110,6 +111,13 @@ func createDesktopIni(dir string, iconPath string) {
 	var ini *os.File
 	var err error
 	iniPath := dir + "/desktop.ini"
+
+	_cmd := exec.Command("attrib", "-s", iniPath)
+	_, err = _cmd.Output()
+	if err != nil {
+		log.Println("ERR: " + err.Error())
+	}
+
 	_, err_stat := os.Stat(iniPath)
 	if err_stat == nil {
 		ini, err = os.Open(iniPath)
@@ -120,6 +128,11 @@ func createDesktopIni(dir string, iconPath string) {
 		log.Println("ERR: " + err.Error())
 	}
 	ini.WriteString(_desktopIni(iconPath))
+	_cmd = exec.Command("attrib", "+s", "+h", iniPath)
+	_, err = _cmd.Output()
+	if err != nil {
+		log.Println("ERR: " + err.Error())
+	}
 	defer ini.Close()
 	// err := os.WriteFile(iniPath, []byte(_desktopIni(iconPath)), 0644)
 	// if err != nil {

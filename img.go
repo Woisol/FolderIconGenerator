@@ -2,6 +2,8 @@ package main
 
 import (
 	// !这个ico原来是会加上去的……
+	"strings"
+
 	ico "github.com/biessek/golang-ico"
 	"github.com/fogleman/gg"
 	"golang.org/x/image/font"
@@ -29,7 +31,8 @@ import (
 
 func generateIcon(dir string, preset, content, decorateIconPath, _baseIconPath, _formator string, fontSize, decImgSize, yOffset int) {
 	var baseIconPath string
-	var formator string
+	// !不再使用preset中的formator
+	// var formator string = _formator
 	if preset == "" {
 		// **不使用预设
 		if _baseIconPath == "" {
@@ -38,7 +41,7 @@ func generateIcon(dir string, preset, content, decorateIconPath, _baseIconPath, 
 
 		}
 		baseIconPath = _baseIconPath
-		formator = _formator
+		// formator = _formator
 	} else {
 		// **使用预设
 		var config Config
@@ -59,20 +62,20 @@ func generateIcon(dir string, preset, content, decorateIconPath, _baseIconPath, 
 				return
 			}
 			baseIconPath = _baseIconPath
-			formator = _formator
+			// formator = _formator
 
 		}
 		baseIconPath = preset.BaseIconPath
-		formator = preset.Formator
+		// formator = preset.Formator
 	}
 
-	_drawIcon(dir, baseIconPath, formator, content, decorateIconPath, fontSize, decImgSize, yOffset)
+	_drawIcon(dir, baseIconPath, _formator, content, decorateIconPath, fontSize, decImgSize, yOffset)
 
 }
 
 // !重要参考https://blog.csdn.net/qq_40585384/article/details/124762939
 // @todo 添加颜色选项
-func _drawIcon(dir string, baseIconPath, formator, content, decorateIconPath string, fontSize, decImgSize, yOffset int) {
+func _drawIcon(dir, baseIconPath, formator, content, decorateIconPath string, fontSize, decImgSize, yOffset int) {
 	// ** 检查path
 	// !Open内部其实就是调用OpenFile……
 	baseIcon, err_baseIconPath := os.Open(baseIconPath)
@@ -128,6 +131,10 @@ func _drawIcon(dir string, baseIconPath, formator, content, decorateIconPath str
 	}
 	// font := truetype.NewFont(gofont.Collection(), fontSize)
 
+	if formator != "" {
+		content = strings.ReplaceAll(strings.ReplaceAll(formator, "$c", content), "$d", dir)
+	}
+
 	genImg := image.NewRGBA(image.Rect(0, 0, width, height))
 	// ** 背景
 	draw.Draw(genImg, baseImg.Bounds(), baseImg, image.Point{}, draw.Src)
@@ -150,9 +157,13 @@ func _drawIcon(dir string, baseIconPath, formator, content, decorateIconPath str
 	// ** 绘制文字
 	drawString(genImg, content, fontSize, float64(width)/2, float64((height+decHeight)/2+icoTextOffset+yOffset))
 
-	outImg, _ := os.Create(HTML_PATH + "/" + dir + ".ico")
+	_, err_cache := os.Stat(HTML_PATH + "/.cache")
+	if err_cache != nil {
+		os.Mkdir(HTML_PATH+"/.cache", 0755)
+	}
+	outImg, _ := os.Create(HTML_PATH + "/.cache/" + dir + ".ico")
 	ico.Encode(outImg, genImg)
-
+	defer outImg.Close()
 }
 
 // ** 文字绘制函数，默认居中定位

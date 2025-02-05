@@ -96,14 +96,14 @@ function App() {
       axios.post('/generate', form.getValues()).then(res => {
         // setPreviewImg("")
         // setTimeout(() => {
-        setPreviewImg("/" + res.data)
+        setPreviewImg("/" + res.data + "?t=" + imgKey)
         // }, 100)
         // (imgRef.current as HTMLImageElement)
         setImgKey(imgKey => imgKey + 1)
       }).catch(err => {
         toast("生成失败，错误：" + err)
       })
-    }, 600)
+    }, 200)
   }
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)

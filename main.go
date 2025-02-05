@@ -94,11 +94,11 @@ func main() {
 		json.Unmarshal(body, &req)
 
 		generateIcon(path.Base(req.Dir), req.Preset, req.Content, req.DecorateIconPath, req.BaseIconPath, req.Formator, req.FontSize, req.DecImgSize, req.YOffset)
-		// !主要在于vite的缓存问题不需要加
+		// ~~主要在于vite的缓存问题不需要加实际也无用
 		// w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		// w.Header().Set("Pragma", "no-cache")
 		// w.Header().Set("Expires", "0")
-		fmt.Fprint(w, path.Base(req.Dir)+".ico")
+		fmt.Fprint(w, ".cache/"+path.Base(req.Dir)+".ico")
 	})
 	http.HandleFunc("/set", func(w http.ResponseWriter, r *http.Request) {
 		var req struct {
@@ -109,7 +109,7 @@ func main() {
 		defer r.Body.Close()
 		json.Unmarshal(body, &req)
 
-		setIcon(req.Dir, HTML_PATH+"/"+path.Base(req.Dir)+".ico", req.GenPath+"/"+path.Base(req.Dir)+".ico")
+		setIcon(req.Dir, HTML_PATH+"/"+".cache"+"/"+path.Base(req.Dir)+".ico", req.GenPath+"/"+path.Base(req.Dir)+".ico")
 		fmt.Fprint(w, "成功设置"+req.Dir+"的图标")
 	})
 	http.ListenAndServe(":6002", nil)
