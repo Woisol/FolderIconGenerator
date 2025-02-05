@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+
 	// "os"
 	"path"
 
@@ -20,9 +21,9 @@ var curDirs = []string{}
 
 // var curDirs = []fs.DirEntry{}
 
-const HTML_PATH = "./Frontend/dist"
+// const HTML_PATH = "./Frontend/dist"
 
-// const HTML_PATH = "."
+const HTML_PATH = "./web"
 
 func main() {
 	// yamlTest()

@@ -2,11 +2,18 @@ package main
 
 import (
 	// !这个ico原来是会加上去的……
+	// "io/fs"
+
 	"strings"
 
+	// svg "github.com/ajstarks/svgo"
 	ico "github.com/biessek/golang-ico"
 	"github.com/fogleman/gg"
-	"github.com/gorilla/rsvg"
+
+	// "github.com/gorilla/rsvg"
+	// "github.com/ajstarks/svgo"
+	// "github.com/srwiley/oksvg"
+	// "github.com/srwiley/rasterx"
 	"golang.org/x/image/font"
 
 	// !go graph……估计是比较重量级的库了……
@@ -64,14 +71,12 @@ func generateIcon(dir string, preset, content, decorateIconPath, _baseIconPath, 
 			}
 			baseIconPath = _baseIconPath
 			// formator = _formator
-
 		}
 		baseIconPath = preset.BaseIconPath
 		// formator = preset.Formator
 	}
 
 	_drawIcon(dir, baseIconPath, _formator, content, strings.ReplaceAll(decorateIconPath, `\"`, `"`), fontSize, decImgSize, yOffset)
-
 }
 
 // !重要参考https://blog.csdn.net/qq_40585384/article/details/124762939
@@ -93,24 +98,44 @@ func _drawIcon(dir, baseIconPath, formator, content, decorateIconPath string, fo
 	// ** 读取图片
 	var baseImg, decImg image.Image
 	var err_baseImg, err_decImg error
+
 	if filepath.Ext(baseIconPath) == ".ico" {
 		baseImg, err_baseImg = ico.Decode(baseIcon)
 	} else {
 		baseImg, _, err_baseImg = image.Decode(baseIcon)
 	}
+	width := baseImg.Bounds().Dx()
+	height := baseImg.Bounds().Dy()
+
 	if filepath.Ext(decorateIconPath) == ".ico" {
 		decImg, err_decImg = ico.Decode(decorateIcon)
 	} else if filepath.Ext(decorateIconPath) == ".svg" {
+		// @todo to implement svg process
+		// img := image.NewRGBA(image.Rect(0, 0, decImgSize, decImgSize))
+		// // decorateIconBytes, _ := os.ReadFile(decorateIconPath)
+		// ico, err := oksvg.ReadIcon(decorateIconPath)
+		// // ico, err := oksvg.ReadIcon(string(decorateIconBytes))
+		// if err != nil {
+		// 	log.Println("ERR: " + err.Error())
+		// 	// return
+		// }
+		// ico.SetTarget(0, 0, float64(decImgSize), float64(decImgSize))
+		// scanner := rasterx.NewScannerGV(int(ico.ViewBox.H), int(ico.ViewBox.W), img, img.Bounds())
+		// raster := rasterx.NewDasher(decImgSize, decImgSize, scanner)
+		// ico.Draw(raster, 1.0)
+
+		// decImg = img
+
+		// decImg, err_decImg = fs.Open(decorateIconPath)
 		// rsvg
 		log.Println("ERR: 暂不支持svg")
+		return
 	} else {
 		decImg, _, err_decImg = image.Decode(decorateIcon)
 	}
 	if err_baseImg != nil {
 		log.Fatal(err_baseImg)
 	}
-	width := baseImg.Bounds().Dx()
-	height := baseImg.Bounds().Dy()
 
 	var decWidth, decHeight int
 
@@ -132,7 +157,7 @@ func _drawIcon(dir, baseIconPath, formator, content, decorateIconPath string, fo
 	// decWidth := decImgSize
 	// decHeight := decImg.Bounds().Dy() / decImg.Bounds().Dx() * decWidth
 
-	// ** 计算字体大小@todo To Implement
+	// ** 计算字体大小@todod To Implement
 	if fontSize == 0 {
 		fontSize = decImgSize / 10
 	}
