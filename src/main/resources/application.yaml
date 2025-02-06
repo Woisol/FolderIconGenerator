@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: folder-icon-generator
+
+image:
+  ico-dir-path: D:/Program-Projects-Main/folder-icon-generator/src/main/resources/static/ico
+  svg-dir-path: D:/Program-Projects-Main/folder-icon-generator/src/main/resources/static/svg
+  output-dir-path: D:/Program-Projects-Main/folder-icon-generator/src/main/resources/static/output
