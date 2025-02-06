@@ -77,6 +77,27 @@ export function Number({ form, title, name, }: NumberOption) {
 		)} />
 	)
 }
+interface ColorBoxOption {
+	form: UseFormReturn;
+	title: string;
+	name: string;
+	defaultValue: string;
+}
+export function ColorBox({ form, title, name, defaultValue }: ColorBoxOption) {
+	useEffect(() => form.setValue(name, defaultValue), [])
+	return (
+		<FormField control={form.control} name={name} render={({ field }) => (
+			<FormItem>
+				<Label title={title} />
+				<FormControl>
+					{/* defaultValue ? defaultValue : */}
+					<Input type='color' placeholder={title} defaultValue={defaultValue}  {...field} />
+				</FormControl>
+				<FormMessage />
+			</FormItem>
+		)} />
+	)
+}
 interface SliderOption {
 	form: UseFormReturn;
 	title: string;

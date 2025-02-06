@@ -25,6 +25,8 @@ var curDirs = []string{}
 
 const HTML_PATH = "./web"
 
+// const HTML_PATH = "."
+
 func main() {
 	// yamlTest()
 	// updateDir("")
@@ -87,6 +89,7 @@ func main() {
 			Formator         string `json:"formator"`
 			FontSize         int    `json:"fontSize"`
 			DecImgSize       int    `json:"decImgSize"`
+			FontColor        string `json:"fontColor"`
 			YOffset          int    `json:"yOffset"`
 			// GenPath          string `json:"genPath"`
 		}
@@ -94,7 +97,7 @@ func main() {
 		defer r.Body.Close()
 		json.Unmarshal(body, &req)
 
-		generateIcon(path.Base(req.Dir), req.Preset, req.Content, req.DecorateIconPath, req.BaseIconPath, req.Formator, req.FontSize, req.DecImgSize, req.YOffset)
+		generateIcon(path.Base(req.Dir), req.Preset, req.Content, req.DecorateIconPath, req.BaseIconPath, req.Formator, req.FontSize, req.FontColor, req.DecImgSize, req.YOffset)
 		// ~~主要在于vite的缓存问题不需要加实际也无用
 		// w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		// w.Header().Set("Pragma", "no-cache")

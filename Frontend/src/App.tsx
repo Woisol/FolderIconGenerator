@@ -3,7 +3,7 @@ import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar'
 import SideBarApp from './components/SideBar/AppSideBar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card'
 import { Input } from './components/ui/input'
-import { Select, Slider, Text } from './components/PropsCard/Props'
+import { ColorBox, Select, Slider, Text } from './components/PropsCard/Props'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from './components/ui/resizable'
 import { Form } from './components/ui/form'
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -33,6 +33,7 @@ function App() {
     formator: z.string().optional(),
     decorateIconPath: z.string().optional(),
     decImgSize: z.number().optional(),
+    fontColor: z.string().optional(),
     yOffset: z.number().optional(),
     genPath: z.string().optional(),
   })
@@ -160,11 +161,12 @@ function App() {
                     <Slider form={form} title='字体大小' name='fontSize' defaultValue={16} min={1} max={100} step={1} />
                     <Text form={form} title='格式字符' name='formator' />
                     {/* //** DecImg */}
+                    <ColorBox form={form} title='文字颜色' name='fontColor' defaultValue={'#ffffff'} />
                     <Text form={form} title='图标路径' name='decorateIconPath' />
                     <Slider form={form} title='图标大小' name='decImgSize' defaultValue={50} min={20} max={1000} step={5} />
                     <Slider form={form} title='y轴偏移' name='yOffset' defaultValue={10} min={-200} max={200} step={5} />
                     <Text form={form} defaultValue='D:/D Icons' title='输出路径' name='genPath' />
-                    <div></div>
+                    {/* <div></div> */}
                     <Input type='submit' value='生成' />
                   </form>
                 </Form>

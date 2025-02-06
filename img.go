@@ -23,7 +23,6 @@ import (
 	"github.com/nfnt/resize"
 	// "github.com/mewkiz/pkg/imgutil"
 	"image"
-	"image/color"
 	"image/draw"
 
 	// "io/fs"
@@ -37,7 +36,7 @@ import (
 
 // type Preset interface{}
 
-func generateIcon(dir string, preset, content, decorateIconPath, _baseIconPath, _formator string, fontSize, decImgSize, yOffset int) {
+func generateIcon(dir string, preset, content, decorateIconPath, _baseIconPath, _formator string, fontSize int, fontColor string, decImgSize, yOffset int) {
 	var baseIconPath string
 	// !不再使用preset中的formator
 	// var formator string = _formator
@@ -76,12 +75,12 @@ func generateIcon(dir string, preset, content, decorateIconPath, _baseIconPath, 
 		// formator = preset.Formator
 	}
 
-	_drawIcon(dir, baseIconPath, _formator, content, strings.ReplaceAll(decorateIconPath, `\"`, `"`), fontSize, decImgSize, yOffset)
+	_drawIcon(dir, baseIconPath, _formator, content, strings.ReplaceAll(decorateIconPath, `\"`, `"`), fontSize, fontColor, decImgSize, yOffset)
 }
 
 // !重要参考https://blog.csdn.net/qq_40585384/article/details/124762939
 // @todo 添加颜色选项
-func _drawIcon(dir, baseIconPath, formator, content, decorateIconPath string, fontSize, decImgSize, yOffset int) {
+func _drawIcon(dir, baseIconPath, formator, content, decorateIconPath string, fontSize int, fontColor string, decImgSize, yOffset int) {
 	// ** 检查path
 	// !Open内部其实就是调用OpenFile……
 	baseIcon, err_baseIconPath := os.Open(baseIconPath)
@@ -187,7 +186,7 @@ func _drawIcon(dir, baseIconPath, formator, content, decorateIconPath string, fo
 	// }
 
 	// ** 绘制文字
-	drawString(genImg, content, fontSize, float64(width)/2, float64((height+decHeight)/2+icoTextOffset+yOffset))
+	drawString(genImg, content, fontSize, fontColor, float64(width)/2, float64((height+decHeight)/2+icoTextOffset+yOffset))
 
 	_, err_cache := os.Stat(HTML_PATH + "/.cache")
 	if err_cache != nil {
@@ -199,7 +198,7 @@ func _drawIcon(dir, baseIconPath, formator, content, decorateIconPath string, fo
 }
 
 // ** 文字绘制函数，默认居中定位
-func drawString(genImg *image.RGBA, content string, fontSize int, x, y float64) {
+func drawString(genImg *image.RGBA, content string, fontSize int, fontColor string, x, y float64) {
 	// !Read和Open还是不太一样的
 	// ~~https://www.cnblogs.com/mfrank/p/14175084.html，gg默认只支持ttf不支持otf……
 	var font font.Face
@@ -229,7 +228,7 @@ func drawString(genImg *image.RGBA, content string, fontSize int, x, y float64) 
 
 	// !用ForRGBA就在现有图片上继续修改不需要把前面的也用gg重写了……
 	ggContext := gg.NewContextForRGBA(genImg)
-	ggContext.SetColor(color.Black)
+	ggContext.SetColor(hex2RGB(fontColor))
 	ggContext.SetFontFace(font)
 	ggContext.DrawStringAnchored(content, x, y, 0.5, 0.5)
 
