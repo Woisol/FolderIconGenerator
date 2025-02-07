@@ -14,6 +14,9 @@ public enum ApiError {
     PATH_NOT_DIR(400, "路径不是目录"),
     SVG_READ_ERROR(400, "SVG读取错误"),
     IMAGE_COMPOSE_ERROR(400, "图片合成错误"),
+    WRITE_IMAGE_ERROR(400, "写入图片错误"),
+    SET_ICON_ERROR(400, "图标设置错误"),
+    ICON_CAN_NOT_GET(400, "图标获取失败"),
 
     // 系统
     SYSTEM_ERROR(500, "服务器内部错误"),

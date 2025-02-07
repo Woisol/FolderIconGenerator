@@ -22,4 +22,6 @@ public class ImageProps {
 
     private String outputDirPath;
 
+    private String tempDirPath;
+
 }

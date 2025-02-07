@@ -16,31 +16,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       // "@": "./src"
     },
-  },
-  server: {
-    proxy: {
-      // "/"
-      "/refresh": {
-        target: "http://localhost:6002",
-        changeOrigin: true,
-        // rewrite: (path) => path.replace(/^\/api/, ""),
-      },
-      "/getDirs": {
-        target: "http://localhost:6002",
-        changeOrigin: true,
-      },
-      "/generate": {
-        target: "http://localhost:6002",
-        changeOrigin: true,
-      },
-      "/set": {
-        target: "http://localhost:6002",
-        changeOrigin: true,
-      },
-      "^/(.*).ico": {
-        target: "http://localhost:6002",
-        changeOrigin: true,
-      },
-    }
   }
 })

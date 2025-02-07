@@ -23,7 +23,9 @@ public class ResourceConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/image/output/**")
-                .addResourceLocations("file:/"+imageProps.getOutputDirPath());
+                .addResourceLocations("file:" + imageProps.getOutputDirPath());
+        registry.addResourceHandler("/image/temp/**")
+                .addResourceLocations("file:" + imageProps.getTempDirPath());
     }
 
 }

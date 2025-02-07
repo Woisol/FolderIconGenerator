@@ -5,7 +5,7 @@ import cn.funstack.foldericon.generator.exception.ApiError;
 import cn.funstack.foldericon.generator.exception.ApiException;
 import cn.funstack.foldericon.generator.pojo.dto.CompositionImageDTO;
 import cn.funstack.foldericon.generator.pojo.vo.ImageConfigVO;
-import cn.funstack.foldericon.generator.util.ImageComposer;
+import cn.funstack.foldericon.generator.util.ImageUtil;
 import org.apache.batik.transcoder.TranscoderException;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +60,7 @@ public class ImageService {
 
     public String getCompositionImage(CompositionImageDTO compositionImageDTO) {
         try {
-            ImageComposer.composeImages(
+            ImageUtil.composeImages(
                     imageProps.getIcoDirPath() + "/" + compositionImageDTO.getIcoFileName(),
                     imageProps.getSvgDirPath() + "/" + compositionImageDTO.getSvgFileName(),
                     compositionImageDTO.getSvgSize(), compositionImageDTO.getSvgSize(),

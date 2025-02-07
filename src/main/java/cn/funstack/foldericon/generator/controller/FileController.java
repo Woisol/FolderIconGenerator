@@ -1,10 +1,8 @@
 package cn.funstack.foldericon.generator.controller;
 
+import cn.funstack.foldericon.generator.pojo.dto.SetIconDTO;
 import cn.funstack.foldericon.generator.service.FileService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,9 +23,24 @@ public class FileController {
         this.fileService = fileService;
     }
 
+    @GetMapping("/cwd")
+    public Boolean checkCwd(@RequestParam String path) {
+        return fileService.checkCwd(path);
+    }
+
     @GetMapping("/dirs")
     public List<String> getDirs(@RequestParam String path) {
         return fileService.getDirs(path);
+    }
+
+    @GetMapping("/icon")
+    public String getIcon(@RequestParam String path, @RequestParam String icoFileName) {
+        return fileService.getIcon(path, icoFileName);
+    }
+
+    @PostMapping("/icon")
+    public void setIcon(@RequestBody SetIconDTO setIconDTO) {
+        fileService.setIcon(setIconDTO);
     }
 
 }

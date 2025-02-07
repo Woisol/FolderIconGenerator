@@ -3,10 +3,7 @@ package cn.funstack.foldericon.generator.controller;
 import cn.funstack.foldericon.generator.pojo.dto.CompositionImageDTO;
 import cn.funstack.foldericon.generator.pojo.vo.ImageConfigVO;
 import cn.funstack.foldericon.generator.service.ImageService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @FileName ImageController
@@ -31,7 +28,7 @@ public class ImageController {
     }
 
     @PostMapping("/composition")
-    public String getCompositionImage(CompositionImageDTO compositionImageDTO) {
+    public String getCompositionImage(@RequestBody CompositionImageDTO compositionImageDTO) {
         return imageService.getCompositionImage(compositionImageDTO);
     }
 

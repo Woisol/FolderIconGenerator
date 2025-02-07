@@ -1,6 +1,7 @@
 package cn.funstack.foldericon.generator.util;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -25,7 +26,7 @@ import java.io.*;
  **/
 
 @Slf4j
-public class ImageComposer {
+public class ImageUtil {
 
     private static BufferedImage transcodeSVGToBufferedImage(String svgFilePath, int width, int height) {
         // Create a PNG transcoder.
@@ -79,7 +80,7 @@ public class ImageComposer {
             Font font = new Font("微软黑体", Font.BOLD, textSize);
             g2d.setFont(font);
             g2d.setColor(Color.BLACK);
-            g2d.drawString("你好", textX, textY);
+            g2d.drawString(text, textX, textY);
         }
 
         // 释放资源
@@ -89,6 +90,14 @@ public class ImageComposer {
         File outputFile = new File(outputFilePath);
         //ImageIO.write(backgroundImage, "ico", outputFile);
         Imaging.writeImage(backgroundImage, outputFile, ImageFormats.ICO);
+    }
+
+    public static BufferedImage iconToBufferedImage(Icon icon) {
+        BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = image.createGraphics();
+        icon.paintIcon(null, g, 0, 0);
+        g.dispose();
+        return image;
     }
 
 }
